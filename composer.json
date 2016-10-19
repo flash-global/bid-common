@@ -1,0 +1,32 @@
+{
+    "name": "fei/bid-common",
+    "description": "Flash applicative bid - common componentt",
+    "type": "library",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Vincent Simonin",
+            "email": "vsi@opcoding.eu"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Fei\\Service\\Bid\\": "src/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://composer.flash-global.net"
+        }
+    ],
+    "require": {
+        "fei/entities": "^1.0",
+        "fei/context": "^1.0",
+        "doctrine/common": "^2.6",
+        "league/fractal": "^0.14.0"
+    },
+    "require-dev": {
+        "codeception/codeception": "^2.2"
+    }
+}
