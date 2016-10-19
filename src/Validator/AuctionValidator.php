@@ -84,8 +84,8 @@ class AuctionValidator extends AbstractValidator
             return false;
         }
 
-        if (!$createdAt instanceof \DateTime) {
-            $this->addError('createdAt', 'The auction creation date time must be a \DateTime instance');
+        if (!$createdAt instanceof \DateTimeInterface) {
+            $this->addError('createdAt', 'The auction creation date time must be a \DateTimeInterface instance');
             return false;
         }
 
@@ -106,8 +106,8 @@ class AuctionValidator extends AbstractValidator
             return false;
         }
 
-        if (!$startAt instanceof \DateTime) {
-            $this->addError('startAt', 'The auction start date time must be a \DateTime instance');
+        if (!$startAt instanceof \DateTimeInterface) {
+            $this->addError('startAt', 'The auction start date time must be a \DateTimeInterface instance');
             return false;
         }
 
@@ -128,8 +128,8 @@ class AuctionValidator extends AbstractValidator
             return false;
         }
 
-        if (!$endAt instanceof \DateTime) {
-            $this->addError('endAt', 'The auction end date time must be a \DateTime instance');
+        if (!$endAt instanceof \DateTimeInterface) {
+            $this->addError('endAt', 'The auction end date time must be a \DateTimeInterface instance');
             return false;
         }
 
@@ -151,8 +151,11 @@ class AuctionValidator extends AbstractValidator
             return false;
         }
 
-        if (!$beginAt instanceof \DateTime || !$finishAt instanceof \DateTime) {
-            $this->addError('auctionInterval', 'The start and end auction date time must be a \DateTime instance');
+        if (!$beginAt instanceof \DateTimeInterface || !$finishAt instanceof \DateTimeInterface) {
+            $this->addError(
+                'auctionInterval',
+                'The start and end auction date time must be a \DateTimeInterface instance'
+            );
             return false;
         }
 

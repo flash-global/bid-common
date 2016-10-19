@@ -22,7 +22,7 @@ class Bid extends AbstractEntity
     protected $id;
 
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     protected $createdAt;
 
@@ -79,7 +79,7 @@ class Bid extends AbstractEntity
     /**
      * Get CreatedAt
      *
-     * @return \DateTime
+     * @return \DateTimeInterface
      */
     public function getCreatedAt()
     {
@@ -89,7 +89,7 @@ class Bid extends AbstractEntity
     /**
      * Set CreatedAt
      *
-     * @param string|\DateTime $createdAt
+     * @param string|\DateTimeInterface $createdAt
      *
      * @return $this
      */

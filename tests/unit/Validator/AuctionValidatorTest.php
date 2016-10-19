@@ -87,7 +87,7 @@ class AuctionValidatorTest extends Unit
 
         $this->assertCount(1, $this->validator->getErrors()['createdAt']);
         $this->assertEquals(
-            'The auction creation date time must be a \DateTime instance',
+            'The auction creation date time must be a \DateTimeInterface instance',
             $this->validator->getErrors()['createdAt'][0]
         );
 
@@ -123,7 +123,7 @@ class AuctionValidatorTest extends Unit
 
         $this->assertCount(1, $this->validator->getErrors()['startAt']);
         $this->assertEquals(
-            'The auction start date time must be a \DateTime instance',
+            'The auction start date time must be a \DateTimeInterface instance',
             $this->validator->getErrors()['startAt'][0]
         );
 
@@ -159,7 +159,7 @@ class AuctionValidatorTest extends Unit
 
         $this->assertCount(1, $this->validator->getErrors()['endAt']);
         $this->assertEquals(
-            'The auction end date time must be a \DateTime instance',
+            'The auction end date time must be a \DateTimeInterface instance',
             $this->validator->getErrors()['endAt'][0]
         );
 
@@ -199,7 +199,7 @@ class AuctionValidatorTest extends Unit
             $this->validator->getErrors()['auctionInterval'][4]
         );
         $this->assertEquals(
-            'The start and end auction date time must be a \DateTime instance',
+            'The start and end auction date time must be a \DateTimeInterface instance',
             $this->validator->getErrors()['auctionInterval'][5]
         );
 

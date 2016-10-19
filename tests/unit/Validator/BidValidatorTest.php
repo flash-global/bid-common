@@ -54,7 +54,7 @@ class BidValidatorTest extends Unit
 
         $this->assertCount(1, $this->validator->getErrors()['createdAt']);
         $this->assertEquals(
-            'The bid creation date time must be a \DateTime instance',
+            'The bid creation date time must be a \DateTimeInterface instance',
             $this->validator->getErrors()['createdAt'][0]
         );
 
@@ -151,6 +151,82 @@ class BidValidatorTest extends Unit
         $this->assertTrue($this->validator->validateBidder(str_repeat('a', 255)));
     }
 
+    public function testValidateAuctionNotInstanceOfAuction()
+    {
+        $this->assertFalse($this->validator->validateAuction(null));
+
+        $this->assertEquals(
+            sprintf('The auction associated to the current bid must be a instance of %s.', Auction::class),
+            $this->validator->getErrors()['auction'][0]
+        );
+    }
+
+    public function testValidateAuctionAuctionNotValid()
+    {
+        $this->assertFalse($this->validator->validateAuction(new Auction()));
+
+        $this->assertEquals(
+            'The auction associated to the current bid must be valid',
+            $this->validator->getErrors()['auction'][0]
+        );
+    }
+
+    public function testValidateAuction()
+    {
+        $auction = (new Auction())
+            ->setStartAt(new \DateTime())
+            ->setEndAt(new \DateTime('+1 day'))
+            ->setMinimalBid(100)
+            ->setBidStep(10)
+            ->setKey('a key');
+
+        $this->assertTrue($this->validator->validateAuction($auction));
+    }
+
+    public function testValidateCreateAtByAuctionNotInAuctionInterval()
+    {
+        $date = new \DateTime('+2 day');
+
+        $auction = (new Auction())
+            ->setStartAt(new \DateTime())
+            ->setEndAt(new \DateTime('+1 day'))
+            ->setMinimalBid(100)
+            ->setBidStep(10);
+
+        $this->assertFalse($this->validator->validateCreatedAtByAuction($date, $auction));
+
+        $this->assertEquals(
+            sprintf(
+                'The bid creation date time must be in auction interval date time validity.'
+                . ' Given %s, not between %s and %s',
+                $date->format(\DateTime::ISO8601),
+                $auction->getStartAt()->format(\DateTime::ISO8601),
+                $auction->getEndAt()->format(\DateTime::ISO8601)
+            ),
+            $this->validator->getErrors()['auction'][0]
+        );
+
+        $this->assertTrue($this->validator->validateCreatedAtByAuction(new \DateTime(), $auction));
+    }
+
+    public function testValidateAmountByAuctionLessThanAuctionMinimalBid()
+    {
+        $auction = (new Auction())
+            ->setStartAt(new \DateTime())
+            ->setEndAt(new \DateTime('+1 day'))
+            ->setMinimalBid(100)
+            ->setBidStep(10);
+
+        $this->assertFalse($this->validator->validateAmountByAuction(10, $auction));
+
+        $this->assertEquals(
+            sprintf('The bid amount must be greater than auction minimal bid. Given %f, not greater than %f', 10, 100),
+            $this->validator->getErrors()['auction'][0]
+        );
+
+        $this->assertTrue($this->validator->validateAmountByAuction(110, $auction));
+    }
+
     public function testValidateEntityType()
     {
         $this->expectException(Exception::class);
@@ -179,6 +255,39 @@ class BidValidatorTest extends Unit
                     ->setAmount(120)
                     ->setBidder('a bidder')
                     ->setContext(['key' => 'value'])
+            )
+        );
+    }
+
+    public function testValidateWithAuctionNotValid()
+    {
+        $this->assertFalse(
+            $this->validator->validate(
+                (new Bid())
+                    ->setAmount(120)
+                    ->setBidder('a bidder')
+                    ->setContext(['key' => 'value'])
+                    ->setAuction(new Auction())
+            )
+        );
+    }
+
+    public function testValidateWithAuction()
+    {
+        $this->assertTrue(
+            $this->validator->validate(
+                (new Bid())
+                    ->setAmount(120)
+                    ->setBidder('a bidder')
+                    ->setContext(['key' => 'value'])
+                    ->setAuction(
+                        (new Auction())
+                            ->setKey('a key')
+                            ->setMinimalBid(100)
+                            ->setBidStep(10)
+                            ->setStartAt(new \DateTime('-1 day'))
+                            ->setEndAt(new \DateTime('+1 day'))
+                    )
             )
         );
     }
