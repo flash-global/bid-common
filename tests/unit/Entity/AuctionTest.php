@@ -153,14 +153,14 @@ class AuctionTest extends Unit
         $this->assertAttributeEquals($auction->getBidStep(), 'bidStep', $auction);
     }
 
-    public function testBidStepUnitAccessors()
+    public function testBidStepStrategyAccessors()
     {
         $auction = new Auction();
 
-        $auction->setBidStepUnit(Auction::STEP_PERCENT);
+        $auction->setBidStepStrategy(Auction::PERCENT_STRATEGY);
 
-        $this->assertEquals(Auction::STEP_PERCENT, $auction->getBidStepUnit());
-        $this->assertAttributeEquals($auction->getBidStepUnit(), 'bidStepUnit', $auction);
+        $this->assertEquals(Auction::PERCENT_STRATEGY, $auction->getBidStepStrategy());
+        $this->assertAttributeEquals($auction->getBidStepStrategy(), 'bidStepStrategy', $auction);
     }
 
     public function testBidsAccessors()
@@ -209,7 +209,7 @@ class AuctionTest extends Unit
             'end_at' => $now,
             'minimal_bid' => 100,
             'bid_step' => 10,
-            'bid_step_unit' => Auction::STEP_PERCENT,
+            'bid_step_strategy' => Auction::PERCENT_STRATEGY,
             'context' => ['key' => 'value'],
             'bids' => [
                 [
@@ -231,7 +231,7 @@ class AuctionTest extends Unit
                 ->setEndAt($now)
                 ->setMinimalBid(100)
                 ->setBidStep(10)
-                ->setBidStepUnit(Auction::STEP_PERCENT)
+                ->setBidStepStrategy(Auction::PERCENT_STRATEGY)
                 ->setContext(['key' => 'value'])
                 ->addBid(
                     (new Bid())
@@ -269,7 +269,7 @@ class AuctionTest extends Unit
                 'end_at' => null,
                 'minimal_bid' => $auction->getMinimalBid(),
                 'bid_step' => $auction->getBidStep(),
-                'bid_step_unit' => $auction->getBidStepUnit(),
+                'bid_step_strategy' => $auction->getBidStepStrategy(),
                 'bids' => [
                     [
                         'id' => null,
@@ -302,7 +302,7 @@ class AuctionTest extends Unit
                 'end_at' => null,
                 'minimal_bid' => $auction->getMinimalBid(),
                 'bid_step' => $auction->getBidStep(),
-                'bid_step_unit' => $auction->getBidStepUnit(),
+                'bid_step_strategy' => $auction->getBidStepStrategy(),
                 'context' => null,
                 'bids' => []
             ],

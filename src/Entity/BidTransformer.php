@@ -2,12 +2,14 @@
 
 namespace Fei\Service\Bid\Entity;
 
+use League\Fractal\TransformerAbstract;
+
 /**
  * Class BidTransformer
  *
  * @package Fei\Service\Bid\Entity
  */
-class BidTransformer
+class BidTransformer extends TransformerAbstract
 {
     /**
      * Transform a Bid instance to an array

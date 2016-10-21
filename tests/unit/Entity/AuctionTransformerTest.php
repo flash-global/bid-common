@@ -24,7 +24,7 @@ class AuctionTransformerTest extends Unit
             ->setStartAt($now)
             ->setEndAt($now)
             ->setBidStep(10)
-            ->setBidStepUnit(Auction::STEP_PERCENT)
+            ->setBidStepStrategy(Auction::PERCENT_STRATEGY)
             ->setMinimalBid(100)
             ->setContext(['test' => 'test']);
 
@@ -36,7 +36,7 @@ class AuctionTransformerTest extends Unit
                 'start_at' => $now->format(\DateTime::ISO8601),
                 'end_at' => $now->format(\DateTime::ISO8601),
                 'bid_step' => 10,
-                'bid_step_unit' => Auction::STEP_PERCENT,
+                'bid_step_strategy' => Auction::PERCENT_STRATEGY,
                 'minimal_bid' => 100,
                 'context' => ['test' => 'test']
             ],

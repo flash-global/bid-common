@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Fei\Service\Bid\Entity;
+namespace Tests\Fei\Service\Bid\Validator;
 
 use Codeception\Test\Unit;
 use Fei\Entity\Validator\Exception;

@@ -9,6 +9,12 @@ use Fei\Service\Context\ContextAwareTrait;
 /**
  * Class Auction
  *
+ * @Entity
+ * @Table(
+ *     name="auctions",
+ *     indexes={ @Index(name="key_idx", columns={"key"}) }
+ * )
+ *
  * @package Fei\Service\Bid\Entity
  */
 class Auction extends AbstractEntity
@@ -17,51 +23,71 @@ class Auction extends AbstractEntity
         hydrate as protected hydrateContext;
     }
 
-    const STEP_PERCENT = 1;
-    const STEP_CURRENCY = 0;
+    const PERCENT_STRATEGY = 1;
+    const BASIC_STRATEGY = 0;
 
     /**
      * @var int
+     *
+     * @Id
+     * @GeneratedValue(strategy="AUTO")
+     * @Column(type="integer")
      */
     protected $id;
 
     /**
      * @var string
+     *
+     * @Column(type="string", name="`key`", unique=true)
      */
     protected $key;
 
     /**
      * @var \DateTime
+     *
+     * @Column(type="datetime")
      */
     protected $createdAt;
 
     /**
      * @var \DateTime
+     *
+     * @Column(type="datetime")
      */
     protected $startAt;
 
     /**
      * @var \DateTime
+     *
+     * @Column(type="datetime")
      */
     protected $endAt;
 
     /**
      * @var float
+     *
+     * @Column(type="float")
      */
     protected $minimalBid;
 
     /**
      * @var float
+     *
+     * @Column(type="float")
      */
     protected $bidStep;
 
     /**
      * @var int
+     *
+     * @Column(type="integer")
      */
-    protected $bidStepUnit = self::STEP_CURRENCY;
+    protected $bidStepStrategy = self::BASIC_STRATEGY;
 
     /**
      * @var ArrayCollection
+     *
+     * @OneToMany(targetEntity="Bid", mappedBy="auction", cascade={"all"})
      */
     protected $bids;
 
@@ -255,25 +281,25 @@ class Auction extends AbstractEntity
     }
 
     /**
-     * Get BidStepUnit
+     * Get BidStepStrategy
      *
      * @return int
      */
-    public function getBidStepUnit()
+    public function getBidStepStrategy()
     {
-        return $this->bidStepUnit;
+        return $this->bidStepStrategy;
     }
 
     /**
-     * Set BidStepUnit
+     * Set BidStepStrategy
      *
-     * @param int $bidStepUnit
+     * @param int $bidStepStrategy
      *
      * @return $this
      */
-    public function setBidStepUnit($bidStepUnit)
+    public function setBidStepStrategy($bidStepStrategy)
     {
-        $this->bidStepUnit = $bidStepUnit;
+        $this->bidStepStrategy = $bidStepStrategy;
         return $this;
     }
 

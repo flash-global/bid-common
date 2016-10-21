@@ -9,6 +9,12 @@ use Fei\Service\Context\ContextAwareTrait;
  * Class Bid
  *
  * @package Fei\Service\Bid\Entity
+ *
+ * @Entity
+ * @Table(
+ *     name="bids",
+ *     indexes={ @Index(name="bidder_idx", columns={"bidder"}) }
+ * )
  */
 class Bid extends AbstractEntity
 {
@@ -18,26 +24,39 @@ class Bid extends AbstractEntity
 
     /**
      * @var int
+     *
+     * @Id
+     * @GeneratedValue(strategy="AUTO")
+     * @Column(type="integer")
      */
     protected $id;
 
     /**
      * @var \DateTimeInterface
+     *
+     * @Column(type="datetime")
      */
     protected $createdAt;
 
     /**
      * @var float
+     *
+     * @Column(type="float")
      */
     protected $amount;
 
     /**
      * @var string
+     *
+     * @Column(type="string")
      */
     protected $bidder;
 
     /**
      * @var Auction
+     *
+     * @ManyToOne(targetEntity="Auction")
+     * @JoinColumn(name="auction_id", referencedColumnName="id")
      */
     protected $auction;
 

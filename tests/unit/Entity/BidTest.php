@@ -121,7 +121,7 @@ class BidTest extends Unit
         );
     }
 
-    public function testHydrateRoomEmpty()
+    public function testHydrateAuctionEmpty()
     {
         $bid = new Bid(['auction' => []]);
 
@@ -150,7 +150,7 @@ class BidTest extends Unit
         );
     }
 
-    public function testToArrayEmptyRoom()
+    public function testToArrayEmptyAuction()
     {
         $now = new \DateTime();
 

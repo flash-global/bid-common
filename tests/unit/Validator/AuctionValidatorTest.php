@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Fei\Service\Bid\Entity;
+namespace Tests\Fei\Service\Bid\Validator;
 
 use Codeception\Test\Unit;
 use Fei\Entity\Validator\Exception;
@@ -314,36 +314,36 @@ class AuctionValidatorTest extends Unit
         );
     }
 
-    public function testValidateBidStepUnitNotEmpty()
+    public function testValidateBidStepStrategyNotEmpty()
     {
-        $this->assertFalse($this->validator->validateBidStepUnit(''));
-        $this->assertFalse($this->validator->validateBidStepUnit(null));
-        $this->assertTrue($this->validator->validateBidStepUnit(0));
+        $this->assertFalse($this->validator->validateBidStepStrategy(''));
+        $this->assertFalse($this->validator->validateBidStepStrategy(null));
+        $this->assertTrue($this->validator->validateBidStepStrategy(0));
 
-        $this->assertCount(2, $this->validator->getErrors()['bidStepUnit']);
+        $this->assertCount(2, $this->validator->getErrors()['bidStepStrategy']);
         $this->assertEquals(
-            'The auction step unit cannot be empty',
-            $this->validator->getErrors()['bidStepUnit'][0]
+            'The auction step strategy cannot be empty',
+            $this->validator->getErrors()['bidStepStrategy'][0]
         );
         $this->assertEquals(
-            'The auction step unit cannot be empty',
-            $this->validator->getErrors()['bidStepUnit'][1]
+            'The auction step strategy cannot be empty',
+            $this->validator->getErrors()['bidStepStrategy'][1]
         );
 
-        $this->assertTrue($this->validator->validateBidStepUnit(Auction::STEP_CURRENCY));
+        $this->assertTrue($this->validator->validateBidStepStrategy(Auction::BASIC_STRATEGY));
     }
 
-    public function testValidateBidStepUnitInValidValues()
+    public function testValidateBidStepStrategyInValidValues()
     {
-        $this->assertFalse($this->validator->validateBidStepUnit('notinvalues'));
+        $this->assertFalse($this->validator->validateBidStepStrategy('notinvalues'));
 
         $this->assertEquals(
-            'The auction step unit value must be 0 or 1',
-            $this->validator->getErrors()['bidStepUnit'][0]
+            'The auction step strategy value must be 0 or 1',
+            $this->validator->getErrors()['bidStepStrategy'][0]
         );
 
-        $this->assertTrue($this->validator->validateBidStepUnit(Auction::STEP_CURRENCY));
-        $this->assertTrue($this->validator->validateBidStepUnit(Auction::STEP_PERCENT));
+        $this->assertTrue($this->validator->validateBidStepStrategy(Auction::BASIC_STRATEGY));
+        $this->assertTrue($this->validator->validateBidStepStrategy(Auction::PERCENT_STRATEGY));
     }
 
     public function testValidateEntityType()
@@ -380,7 +380,7 @@ class AuctionValidatorTest extends Unit
                     ->setEndAt(new \DateTime('+1 day'))
                     ->setMinimalBid(100)
                     ->setBidStep(10)
-                    ->setBidStepUnit(Auction::STEP_PERCENT)
+                    ->setBidStepStrategy(Auction::PERCENT_STRATEGY)
                     ->setContext(['key' => 'value'])
             )
         );

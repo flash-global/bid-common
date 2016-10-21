@@ -27,7 +27,7 @@ class AuctionTransformer extends TransformerAbstract
             'start_at' => $auction->getStartAt()->format(\DateTime::ISO8601),
             'end_at' => $auction->getEndAt()->format(\DateTime::ISO8601),
             'bid_step' => $auction->getBidStep(),
-            'bid_step_unit' => $auction->getBidStepUnit(),
+            'bid_step_strategy' => $auction->getBidStepStrategy(),
             'minimal_bid' => $auction->getMinimalBid(),
             'context' => $auction->getContext()
         );

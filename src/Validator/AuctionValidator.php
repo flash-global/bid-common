@@ -35,7 +35,7 @@ class AuctionValidator extends AbstractValidator
         $this->validateAuctionInterval($entity->getStartAt(), $entity->getEndAt());
         $this->validateMinimalBid($entity->getMinimalBid());
         $this->validateBidStep($entity->getBidStep());
-        $this->validateBidStepUnit($entity->getBidStepUnit());
+        $this->validateBidStepStrategy($entity->getBidStepStrategy());
         $this->validateContext($entity->getContext());
 
         $errors = $this->getErrors();
@@ -231,15 +231,15 @@ class AuctionValidator extends AbstractValidator
      *
      * @return bool
      */
-    public function validateBidStepUnit($stepUnit)
+    public function validateBidStepStrategy($stepUnit)
     {
         if (empty($stepUnit) && $stepUnit !== 0) {
-            $this->addError('bidStepUnit', 'The auction step unit cannot be empty');
+            $this->addError('bidStepStrategy', 'The auction step strategy cannot be empty');
             return false;
         }
 
-        if (!is_numeric($stepUnit) || !in_array($stepUnit, [Auction::STEP_PERCENT, Auction::STEP_CURRENCY])) {
-            $this->addError('bidStepUnit', 'The auction step unit value must be 0 or 1');
+        if (!is_numeric($stepUnit) || !in_array($stepUnit, [Auction::PERCENT_STRATEGY, Auction::BASIC_STRATEGY])) {
+            $this->addError('bidStepStrategy', 'The auction step strategy value must be 0 or 1');
             return false;
         }
 
