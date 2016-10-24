@@ -16,7 +16,23 @@ class PercentStrategyValidator extends AbstractStrategyValidator
     {
         $min = ($lastAmount * (1 + ($step / 100)));
 
-        if (bccomp($amount, $min) < 0) {
+        $bccomp = function ($left, $right) {
+            if (function_exists('bccomp')) {
+                return bccomp($left, $right);
+            }
+
+            if (abs($left - $right) < 0.00001) {
+                return 0;
+            }
+
+            if ($left > $right) {
+                return 1;
+            }
+
+            return -1;
+        };
+
+        if ($bccomp($amount, $min) < 0) {
             throw $this->buildException($amount, $min);
         }
 
