@@ -21,6 +21,7 @@ class BidTransformerTest extends Unit
             ->setId(1)
             ->setCreatedAt($now)
             ->setAmount(120)
+            ->setBidder('a bidder')
             ->setContext(['test' => 'test']);
 
         $this->assertEquals(
@@ -28,6 +29,7 @@ class BidTransformerTest extends Unit
                 'id' => 1,
                 'created_at' => $now->format(\DateTime::ISO8601),
                 'amount' => 120,
+                'bidder' => 'a bidder',
                 'context' => ['test' => 'test']
             ],
             (new BidTransformer())->transform($bid)

@@ -24,6 +24,7 @@ class BidTransformer extends TransformerAbstract
             'id' => (int) $bid->getId(),
             'created_at' => $bid->getCreatedAt()->format(\DateTime::ISO8601),
             'amount' => $bid->getAmount(),
+            'bidder' => $bid->getBidder(),
             'context' => $bid->getContext()
         );
     }

@@ -26,6 +26,8 @@ class Auction extends AbstractEntity
     const PERCENT_STRATEGY = 1;
     const BASIC_STRATEGY = 0;
 
+    const CRITERIA_KEY = 'key';
+
     /**
      * @var int
      *
