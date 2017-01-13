@@ -165,8 +165,8 @@ class BidValidatorTest extends Unit
     {
         $this->assertFalse($this->validator->validateAuction(new Auction()));
 
-        $this->assertEquals(
-            'The auction associated to the current bid must be valid',
+        $this->assertRegExp(
+            '/^The auction associated to the current bid must be valid \- (.*)$/',
             $this->validator->getErrors()['auction'][0]
         );
     }
@@ -254,7 +254,7 @@ class BidValidatorTest extends Unit
                 (new Bid())
                     ->setAmount(120)
                     ->setBidder('a bidder')
-                    ->setContext(['key' => 'value'])
+                    ->setContexts(['key' => 'value'])
             )
         );
     }
@@ -266,7 +266,7 @@ class BidValidatorTest extends Unit
                 (new Bid())
                     ->setAmount(120)
                     ->setBidder('a bidder')
-                    ->setContext(['key' => 'value'])
+                    ->setContexts(['key' => 'value'])
                     ->setAuction(new Auction())
             )
         );
@@ -279,7 +279,7 @@ class BidValidatorTest extends Unit
                 (new Bid())
                     ->setAmount(120)
                     ->setBidder('a bidder')
-                    ->setContext(['key' => 'value'])
+                    ->setContexts(['key' => 'value'])
                     ->setAuction(
                         (new Auction())
                             ->setKey('a key')

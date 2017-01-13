@@ -4,6 +4,7 @@ namespace Tests\Fei\Service\Bid\Entity;
 
 use Codeception\Test\Unit;
 use Fei\Service\Bid\Entity\Auction;
+use Fei\Service\Bid\Entity\AuctionContext;
 use Fei\Service\Bid\Entity\AuctionTransformer;
 
 /**
@@ -26,7 +27,7 @@ class AuctionTransformerTest extends Unit
             ->setBidStep(10)
             ->setBidStepStrategy(Auction::PERCENT_STRATEGY)
             ->setMinimalBid(100)
-            ->setContext(['test' => 'test']);
+            ->setContexts(new AuctionContext(['key' => 'test', 'value' => 'value']));
 
         $this->assertEquals(
             [
@@ -38,7 +39,7 @@ class AuctionTransformerTest extends Unit
                 'bid_step' => 10,
                 'bid_step_strategy' => Auction::PERCENT_STRATEGY,
                 'minimal_bid' => 100,
-                'context' => ['test' => 'test']
+                'contexts' => ['test' => 'value']
             ],
             (new AuctionTransformer())->transform($auction)
         );

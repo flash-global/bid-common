@@ -7,7 +7,6 @@ use Fei\Entity\Validator\AbstractValidator;
 use Fei\Entity\Validator\Exception;
 use Fei\Service\Bid\Entity\Auction;
 use Fei\Service\Bid\Entity\Bid;
-use Fei\Service\Context\Validator\ContextAwareValidatorTrait;
 
 /**
  * Class BidValidator
@@ -16,7 +15,7 @@ use Fei\Service\Context\Validator\ContextAwareValidatorTrait;
  */
 class BidValidator extends AbstractValidator
 {
-    use ContextAwareValidatorTrait;
+    use ContextValidator;
 
     /**
      * {@inheritdoc}
@@ -32,7 +31,7 @@ class BidValidator extends AbstractValidator
         $isCreatedAtValid = $this->validateCreatedAt($entity->getCreatedAt());
         $isAmountValid = $this->validateAmount($entity->getAmount());
         $this->validateBidder($entity->getBidder());
-        $this->validateContext($entity->getContext());
+        $this->validateContext($entity->getContexts());
 
         if ($isCreatedAtValid
             && $isAmountValid
@@ -144,7 +143,10 @@ class BidValidator extends AbstractValidator
         $validator = new AuctionValidator();
 
         if (!$validator->validate($auction)) {
-            $this->addError('auction', 'The auction associated to the current bid must be valid');
+            $this->addError(
+                'auction',
+                'The auction associated to the current bid must be valid - ' . $validator->getErrorsAsString()
+            );
             return false;
         }
 

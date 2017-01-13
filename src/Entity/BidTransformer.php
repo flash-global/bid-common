@@ -20,12 +20,18 @@ class BidTransformer extends TransformerAbstract
      */
     public function transform(Bid $bid)
     {
+        $contextItems = array();
+
+        foreach ($bid->getContexts() as $contextItem) {
+            $contextItems[$contextItem->getKey()] = $contextItem->getValue();
+        }
+
         return array(
             'id' => (int) $bid->getId(),
             'created_at' => $bid->getCreatedAt()->format(\DateTime::ISO8601),
             'amount' => $bid->getAmount(),
             'bidder' => $bid->getBidder(),
-            'context' => $bid->getContext()
+            'contexts' => $contextItems
         );
     }
 }
