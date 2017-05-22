@@ -23,6 +23,7 @@ class Auction extends AbstractEntity
         hydrate as protected hydrateContext;
     }
 
+    const NO_STRATEGY = 2;
     const PERCENT_STRATEGY = 1;
     const BASIC_STRATEGY = 0;
 
