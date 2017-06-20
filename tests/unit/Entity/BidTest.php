@@ -3,8 +3,10 @@
 namespace Tests\Fei\Service\Bid\Entity;
 
 use Codeception\Test\Unit;
+use Doctrine\Common\Collections\ArrayCollection;
 use Fei\Service\Bid\Entity\Auction;
 use Fei\Service\Bid\Entity\Bid;
+use Fei\Service\Bid\Entity\BidContext;
 
 /**
  * Class BidTest
@@ -86,6 +88,18 @@ class BidTest extends Unit
         $this->assertAttributeEquals($bid->getAuction(), 'auction', $bid);
     }
 
+    public function testContextAccessors()
+    {
+        $bid = new Bid();
+        $bid->setContexts(new BidContext());
+
+        $context = new BidContext();
+        $context->setBid($bid);
+
+        $this->assertEquals(new ArrayCollection([$context]), $bid->getContexts());
+        $this->assertAttributeEquals($bid->getContexts(), 'contexts', $bid);
+    }
+
     public function testHydrate()
     {
         $now = new \DateTime();
@@ -94,12 +108,12 @@ class BidTest extends Unit
             'createdAt' => $now,
             'amount' => 120,
             'bidder' => 'bidder',
-            'context' => ['key' => 'value'],
+            'contexts' => ['key' => 'value'],
             'auction' => [
                 'id' => 1,
                 'key' => 'key',
                 'createdAt' => $now,
-                'context' => ['key' => 'value']
+                'contexts' => ['key' => 'value']
             ]
         ]);
 
@@ -109,13 +123,46 @@ class BidTest extends Unit
                 ->setCreatedAt($now)
                 ->setBidder('bidder')
                 ->setAmount(120)
-                ->setContext(['key' => 'value'])
+                ->setContexts(['key' => 'value'])
                 ->setAuction(
                     (new Auction())
                         ->setId(1)
                         ->setKey('key')
                         ->setCreatedAt($now)
-                        ->setContext(['key' => 'value'])
+                        ->setContexts(['key' => 'value'])
+                ),
+            $bid
+        );
+    }
+
+    public function testHydrateEmptyContext()
+    {
+        $now = new \DateTime();
+        $bid = new Bid([
+            'id' => 1,
+            'createdAt' => $now,
+            'amount' => 120,
+            'bidder' => 'bidder',
+            'contexts' => [],
+            'auction' => [
+                'id' => 1,
+                'key' => 'key',
+                'createdAt' => $now,
+                'contexts' => []
+            ]
+        ]);
+
+        $this->assertEquals(
+            (new Bid())
+                ->setId(1)
+                ->setCreatedAt($now)
+                ->setBidder('bidder')
+                ->setAmount(120)
+                ->setAuction(
+                    (new Auction())
+                        ->setId(1)
+                        ->setKey('key')
+                        ->setCreatedAt($now)
                 ),
             $bid
         );
@@ -144,7 +191,7 @@ class BidTest extends Unit
                 'amount' => null,
                 'created_at' => $now->format(\DateTime::RFC3339),
                 'auction_id' => null,
-                'context' => null
+                'contexts' => []
             ],
             $bid->toArray()
         );
@@ -163,7 +210,7 @@ class BidTest extends Unit
                 'bidder' => null,
                 'amount' => null,
                 'created_at' => $now->format(\DateTime::RFC3339),
-                'context' => null,
+                'contexts' => [],
                 'auction' => null
             ],
             $bid->toArray()
