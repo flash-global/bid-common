@@ -191,7 +191,8 @@ class BidTest extends Unit
                 'amount' => null,
                 'created_at' => $now->format(\DateTime::RFC3339),
                 'auction_id' => null,
-                'contexts' => []
+                'contexts' => [],
+                'status' => Bid::STATUS_ONGOING
             ],
             $bid->toArray()
         );
@@ -211,7 +212,8 @@ class BidTest extends Unit
                 'amount' => null,
                 'created_at' => $now->format(\DateTime::RFC3339),
                 'contexts' => [],
-                'auction' => null
+                'auction' => null,
+                'status' => Bid::STATUS_ONGOING
             ],
             $bid->toArray()
         );
