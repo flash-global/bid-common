@@ -5,6 +5,7 @@ namespace Tests\Fei\Service\Bid\Entity;
 use Codeception\Test\Unit;
 use Doctrine\Common\Collections\ArrayCollection;
 use Fei\Service\Bid\Entity\Auction;
+use Fei\Service\Bid\Entity\AuctionContext;
 use Fei\Service\Bid\Entity\Bid;
 
 /**
@@ -197,6 +198,18 @@ class AuctionTest extends Unit
         $this->assertCount(0, $auction->getBids());
     }
 
+    public function testContextAccessors()
+    {
+        $auction = new Auction();
+        $auction->setContexts(new AuctionContext());
+
+        $context = new AuctionContext();
+        $context->setAuction($auction);
+
+        $this->assertEquals(new ArrayCollection([$context]), $auction->getContexts());
+        $this->assertAttributeEquals($auction->getContexts(), 'contexts', $auction);
+    }
+
     public function testHydrate()
     {
         $now = new \DateTime();
@@ -210,14 +223,14 @@ class AuctionTest extends Unit
             'minimal_bid' => 100,
             'bid_step' => 10,
             'bid_step_strategy' => Auction::PERCENT_STRATEGY,
-            'context' => ['key' => 'value'],
+            'contexts' => ['key' => 'value'],
             'bids' => [
                 [
                     'id' => 1,
                     'created_at' => $now,
                     'amount' => 120,
                     'bidder' => 'user',
-                    'context' => ['key' => 'value']
+                    'contexts' => ['key' => 'value']
                 ]
             ]
         ]);
@@ -232,14 +245,59 @@ class AuctionTest extends Unit
                 ->setMinimalBid(100)
                 ->setBidStep(10)
                 ->setBidStepStrategy(Auction::PERCENT_STRATEGY)
-                ->setContext(['key' => 'value'])
+                ->setContexts(['key' => 'value'])
                 ->addBid(
                     (new Bid())
                         ->setId(1)
                         ->setCreatedAt($now)
                         ->setAmount(120)
                         ->setBidder('user')
-                        ->setContext(['key' => 'value'])
+                        ->setContexts(['key' => 'value'])
+                ),
+            $auction
+        );
+    }
+
+    public function testHydrateEmptyContext()
+    {
+        $now = new \DateTime();
+
+        $auction = new Auction([
+            'id' => 1,
+            'key' => 'a key',
+            'created_at' => $now,
+            'start_at' => $now,
+            'end_at' => $now,
+            'minimal_bid' => 100,
+            'bid_step' => 10,
+            'bid_step_strategy' => Auction::PERCENT_STRATEGY,
+            'contexts' => [],
+            'bids' => [
+                [
+                    'id' => 1,
+                    'created_at' => $now,
+                    'amount' => 120,
+                    'bidder' => 'user',
+                ]
+            ]
+        ]);
+
+        $this->assertEquals(
+            (new Auction())
+                ->setId(1)
+                ->setKey('a key')
+                ->setCreatedAt($now)
+                ->setStartAt($now)
+                ->setEndAt($now)
+                ->setMinimalBid(100)
+                ->setBidStep(10)
+                ->setBidStepStrategy(Auction::PERCENT_STRATEGY)
+                ->addBid(
+                    (new Bid())
+                        ->setId(1)
+                        ->setCreatedAt($now)
+                        ->setAmount(120)
+                        ->setBidder('user')
                 ),
             $auction
         );
@@ -276,17 +334,18 @@ class AuctionTest extends Unit
                         'created_at' => $now->format(\DateTime::RFC3339),
                         'bidder' => null,
                         'amount' => null,
-                        'context' => null,
-                        'auction_id' => $auction->getId()
+                        'contexts' => [],
+                        'status' => Bid::STATUS_ONGOING,
+                        'auction_id' => $auction->getId(),
                     ]
                 ],
-                'context' => null
+                'contexts' => []
             ],
             $auction->toArray()
         );
     }
 
-    public function testToArrayEmptyMessage()
+    public function testToArrayEmptyBid()
     {
         $now = new \DateTime();
 
@@ -303,7 +362,7 @@ class AuctionTest extends Unit
                 'minimal_bid' => $auction->getMinimalBid(),
                 'bid_step' => $auction->getBidStep(),
                 'bid_step_strategy' => $auction->getBidStepStrategy(),
-                'context' => null,
+                'contexts' => [],
                 'bids' => []
             ],
             $auction->toArray()

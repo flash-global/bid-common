@@ -7,7 +7,6 @@ use Fei\Entity\Validator\AbstractValidator;
 use Fei\Entity\Validator\Exception;
 use Fei\Service\Bid\Entity\Auction;
 use Fei\Service\Bid\Entity\Bid;
-use Fei\Service\Context\Validator\ContextAwareValidatorTrait;
 
 /**
  * Class BidValidator
@@ -16,7 +15,7 @@ use Fei\Service\Context\Validator\ContextAwareValidatorTrait;
  */
 class BidValidator extends AbstractValidator
 {
-    use ContextAwareValidatorTrait;
+    use ContextValidator;
 
     /**
      * {@inheritdoc}
@@ -30,9 +29,10 @@ class BidValidator extends AbstractValidator
         }
 
         $isCreatedAtValid = $this->validateCreatedAt($entity->getCreatedAt());
+        $isStatusValid = $this->validateStatus($entity->getStatus());
         $isAmountValid = $this->validateAmount($entity->getAmount());
         $this->validateBidder($entity->getBidder());
-        $this->validateContext($entity->getContext());
+        $this->validateContext($entity->getContexts());
 
         if ($isCreatedAtValid
             && $isAmountValid
@@ -64,6 +64,28 @@ class BidValidator extends AbstractValidator
 
         if (!$createdAt instanceof \DateTimeInterface) {
             $this->addError('createdAt', 'The bid creation date time must be a \DateTimeInterface instance');
+            return false;
+        }
+
+        return true;
+    }
+    /**
+     * Validate status of the bid
+     *
+     * @param mixed $status
+     *
+     * @return bool
+     */
+    public function validateStatus($status)
+    {
+        if (!in_array($status, [Bid::STATUS_ONGOING, Bid::STATUS_REFUSED, Bid::STATUS_ACCEPTED])) {
+            $this->addError('status', sprintf(
+                'The status has to be on of the following status: `Ongoing (%d)`, `Refused (%d)` or `Accepted (%d)`',
+                Bid::STATUS_ONGOING,
+                Bid::STATUS_REFUSED,
+                Bid::STATUS_ACCEPTED
+            ));
+
             return false;
         }
 
@@ -144,7 +166,10 @@ class BidValidator extends AbstractValidator
         $validator = new AuctionValidator();
 
         if (!$validator->validate($auction)) {
-            $this->addError('auction', 'The auction associated to the current bid must be valid');
+            $this->addError(
+                'auction',
+                'The auction associated to the current bid must be valid - ' . $validator->getErrorsAsString()
+            );
             return false;
         }
 

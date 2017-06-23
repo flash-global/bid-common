@@ -20,6 +20,12 @@ class AuctionTransformer extends TransformerAbstract
      */
     public function transform(Auction $auction)
     {
+        $contextItems = array();
+
+        foreach ($auction->getContexts() as $contextItem) {
+            $contextItems[$contextItem->getKey()] = $contextItem->getValue();
+        }
+
         return array(
             'id' => (int) $auction->getId(),
             'key' => $auction->getKey(),
@@ -29,7 +35,7 @@ class AuctionTransformer extends TransformerAbstract
             'bid_step' => $auction->getBidStep(),
             'bid_step_strategy' => $auction->getBidStepStrategy(),
             'minimal_bid' => $auction->getMinimalBid(),
-            'context' => $auction->getContext()
+            'contexts' => $contextItems
         );
     }
 }
