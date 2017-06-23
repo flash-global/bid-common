@@ -29,6 +29,7 @@ class BidValidator extends AbstractValidator
         }
 
         $isCreatedAtValid = $this->validateCreatedAt($entity->getCreatedAt());
+        $isStatusValid = $this->validateStatus($entity->getStatus());
         $isAmountValid = $this->validateAmount($entity->getAmount());
         $this->validateBidder($entity->getBidder());
         $this->validateContext($entity->getContexts());
@@ -63,6 +64,28 @@ class BidValidator extends AbstractValidator
 
         if (!$createdAt instanceof \DateTimeInterface) {
             $this->addError('createdAt', 'The bid creation date time must be a \DateTimeInterface instance');
+            return false;
+        }
+
+        return true;
+    }
+    /**
+     * Validate status of the bid
+     *
+     * @param mixed $status
+     *
+     * @return bool
+     */
+    public function validateStatus($status)
+    {
+        if (!in_array($status, [Bid::STATUS_ONGOING, Bid::STATUS_REFUSED, Bid::STATUS_ACCEPTED])) {
+            $this->addError('status', sprintf(
+                'The status has to be on of the following status: `Ongoing (%d)`, `Refused (%d)` or `Accepted (%d)`',
+                Bid::STATUS_ONGOING,
+                Bid::STATUS_REFUSED,
+                Bid::STATUS_ACCEPTED
+            ));
+
             return false;
         }
 

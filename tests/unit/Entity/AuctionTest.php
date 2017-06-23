@@ -335,7 +335,8 @@ class AuctionTest extends Unit
                         'bidder' => null,
                         'amount' => null,
                         'contexts' => [],
-                        'auction_id' => $auction->getId()
+                        'status' => Bid::STATUS_ONGOING,
+                        'auction_id' => $auction->getId(),
                     ]
                 ],
                 'contexts' => []

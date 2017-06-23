@@ -18,6 +18,10 @@ use Fei\Entity\AbstractEntity;
  */
 class Bid extends AbstractEntity
 {
+    const STATUS_ONGOING = 1;
+    const STATUS_REFUSED = 2;
+    const STATUS_ACCEPTED = 4;
+
     /**
      * @var int
      *
@@ -33,6 +37,13 @@ class Bid extends AbstractEntity
      * @Column(type="datetime")
      */
     protected $createdAt;
+
+    /**
+     * @var int
+     *
+     * @Column(type="integer")
+     */
+    protected $status;
 
     /**
      * @var float
@@ -71,6 +82,7 @@ class Bid extends AbstractEntity
     public function __construct($data = null)
     {
         $this->contexts = new ArrayCollection();
+        $this->setStatus(self::STATUS_ONGOING);
         $this->setCreatedAt(new \DateTime());
 
         parent::__construct($data);
@@ -124,6 +136,29 @@ class Bid extends AbstractEntity
 
         $this->createdAt = $createdAt;
 
+        return $this;
+    }
+
+    /**
+     * Get Status
+     *
+     * @return int
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Set Status
+     *
+     * @param int $status
+     *
+     * @return $this
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
         return $this;
     }
 
