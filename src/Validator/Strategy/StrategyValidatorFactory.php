@@ -26,6 +26,8 @@ class StrategyValidatorFactory
                 return new BasicStrategyValidator();
             case Auction::PERCENT_STRATEGY:
                 return new PercentStrategyValidator();
+            case Auction::NO_STRATEGY:
+                return new NoStrategyValidator();
             default:
                 throw new StrategyValidatorFactoryException(
                     sprintf('Unable to find strategy "%d"', $auction->getBidStepStrategy())

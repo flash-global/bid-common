@@ -338,7 +338,7 @@ class AuctionValidatorTest extends Unit
         $this->assertFalse($this->validator->validateBidStepStrategy('notinvalues'));
 
         $this->assertEquals(
-            'The auction step strategy value must be 0 or 1',
+            'The auction step strategy value must be 0, 1, or 2',
             $this->validator->getErrors()['bidStepStrategy'][0]
         );
 
