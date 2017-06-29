@@ -237,8 +237,8 @@ class AuctionValidator extends AbstractValidator
             return false;
         }
 
-        if (!is_numeric($stepUnit) || !in_array($stepUnit, [Auction::PERCENT_STRATEGY, Auction::BASIC_STRATEGY])) {
-            $this->addError('bidStepStrategy', 'The auction step strategy value must be 0 or 1');
+        if (!is_numeric($stepUnit) || !in_array($stepUnit, [Auction::PERCENT_STRATEGY, Auction::BASIC_STRATEGY, Auction::NO_STRATEGY])) {
+            $this->addError('bidStepStrategy', 'The auction step strategy value must be 0, 1, or 2');
             return false;
         }
 

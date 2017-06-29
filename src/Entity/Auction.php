@@ -18,6 +18,7 @@ use Fei\Entity\AbstractEntity;
  */
 class Auction extends AbstractEntity
 {
+    const NO_STRATEGY = 2;
     const PERCENT_STRATEGY = 1;
     const BASIC_STRATEGY = 0;
 

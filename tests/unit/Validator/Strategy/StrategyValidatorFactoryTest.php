@@ -23,9 +23,9 @@ class StrategyValidatorFactoryTest extends Unit
     public function testCreateThrowException()
     {
         $this->expectException(StrategyValidatorFactoryException::class);
-        $this->expectExceptionMessage('Unable to find strategy "2"');
+        $this->expectExceptionMessage('Unable to find strategy "10"');
 
-        StrategyValidatorFactory::create((new Auction())->setBidStepStrategy(2));
+        StrategyValidatorFactory::create((new Auction())->setBidStepStrategy(10));
     }
 
     public function testCreateBasicStrategyValidator()
