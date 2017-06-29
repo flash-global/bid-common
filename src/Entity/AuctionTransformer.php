@@ -26,9 +26,17 @@ class AuctionTransformer extends TransformerAbstract
             $contextItems[$contextItem->getKey()] = $contextItem->getValue();
         }
 
+        // Transform the current auction bids.
+        $bt = new BidTransformer();
+        $bids = [];
+        foreach ($auction->getBids() as $bid) {
+            $bids[] = $bt->transform($bid);
+        }
+
         return array(
             'id' => (int) $auction->getId(),
             'key' => $auction->getKey(),
+            'bids' => $bids,
             'created_at' => $auction->getCreatedAt()->format(\DateTime::ISO8601),
             'start_at' => $auction->getStartAt()->format(\DateTime::ISO8601),
             'end_at' => $auction->getEndAt()->format(\DateTime::ISO8601),
