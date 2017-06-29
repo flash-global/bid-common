@@ -4,25 +4,20 @@ namespace Fei\Service\Bid\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Fei\Entity\AbstractEntity;
-use Fei\Service\Context\ContextAwareTrait;
 
 /**
  * Class Auction
+ *
+ * @package Fei\Service\Bid\Entity
  *
  * @Entity
  * @Table(
  *     name="auctions",
  *     indexes={ @Index(name="key_idx", columns={"key"}) }
  * )
- *
- * @package Fei\Service\Bid\Entity
  */
 class Auction extends AbstractEntity
 {
-    use ContextAwareTrait {
-        hydrate as protected hydrateContext;
-    }
-
     const NO_STRATEGY = 2;
     const PERCENT_STRATEGY = 1;
     const BASIC_STRATEGY = 0;
@@ -95,6 +90,13 @@ class Auction extends AbstractEntity
     protected $bids;
 
     /**
+     * @var ArrayCollection
+     *
+     * @OneToMany(targetEntity="AuctionContext", mappedBy="auction", cascade={"all"})
+     */
+    protected $contexts;
+
+    /**
      * Auction constructor.
      *
      * @param array $data
@@ -103,6 +105,7 @@ class Auction extends AbstractEntity
     {
         $this->setCreatedAt(new \DateTime());
         $this->setBids(new ArrayCollection());
+        $this->contexts = new ArrayCollection();
 
         parent::__construct($data);
     }
@@ -360,6 +363,75 @@ class Auction extends AbstractEntity
     }
 
     /**
+     * Get Contexts
+     *
+     * @return ArrayCollection
+     */
+    public function getContexts()
+    {
+        return $this->contexts;
+    }
+
+    /**
+     * Set Contexts
+     *
+     * @param ArrayCollection|AuctionContext|array $context
+     *
+     * @return $this
+     */
+    public function setContexts($context)
+    {
+        if ($context instanceof AuctionContext) {
+            $context->setAuction($this);
+            $context = array($context);
+        }
+
+        if ($context instanceof \ArrayObject || is_array($context) || $context instanceof \Iterator) {
+            foreach ($context as $key => $value) {
+                if (!$value instanceof Context) {
+                    $value = $value instanceof \stdClass ? (array) $value : $value;
+
+                    if (is_int($key)
+                        && is_array($value)
+                        && array_key_exists('key', $value)
+                        && array_key_exists('value', $value)
+                    ) {
+                        $contextData = array('key' => $value['key'], 'value' => $value['value']);
+
+                        if (isset($value['id'])) {
+                            $contextData['id'] = $value['id'];
+                        }
+                    } else {
+                        $contextData = array('key' => $key, 'value' => $value);
+                    }
+
+                    $value = new AuctionContext($contextData);
+                }
+
+                $value->setAuction($this);
+                $this->contexts->add($value);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add a context
+     *
+     * @param AuctionContext $context
+     *
+     * @return $this
+     */
+    public function addContext(AuctionContext $context)
+    {
+        $context->setAuction($this);
+        $this->contexts->add($context);
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function toArray($mapped = false)
@@ -372,6 +444,15 @@ class Auction extends AbstractEntity
                 $bids[] = $value->toArray();
             }
             $data['bids'] = $bids;
+        }
+
+        if (!empty($data['contexts'])) {
+            $context = array();
+            foreach ($data['contexts'] as $key => $value) {
+                $context[$key] = $value->toArray();
+                unset($context[$key]['auction']);
+            }
+            $data['contexts'] = $context;
         }
 
         return $data;
@@ -390,6 +471,6 @@ class Auction extends AbstractEntity
             $data['bids'] = new ArrayCollection($bids);
         }
 
-        $this->hydrateContext($data);
+        parent::hydrate($data);
     }
 }

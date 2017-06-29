@@ -6,7 +6,6 @@ use Fei\Entity\EntityInterface;
 use Fei\Entity\Validator\AbstractValidator;
 use Fei\Entity\Validator\Exception;
 use Fei\Service\Bid\Entity\Auction;
-use Fei\Service\Context\Validator\ContextAwareValidatorTrait;
 
 /**
  * Class AuctionValidator
@@ -15,7 +14,7 @@ use Fei\Service\Context\Validator\ContextAwareValidatorTrait;
  */
 class AuctionValidator extends AbstractValidator
 {
-    use ContextAwareValidatorTrait;
+    use ContextValidator;
 
     /**
      * {@inheritdoc}
@@ -36,7 +35,7 @@ class AuctionValidator extends AbstractValidator
         $this->validateMinimalBid($entity->getMinimalBid());
         $this->validateBidStep($entity->getBidStep());
         $this->validateBidStepStrategy($entity->getBidStepStrategy());
-        $this->validateContext($entity->getContext());
+        $this->validateContext($entity->getContexts());
 
         $errors = $this->getErrors();
 

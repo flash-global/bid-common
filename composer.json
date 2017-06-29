@@ -22,7 +22,6 @@
     ],
     "require": {
         "fei/entities": "^1.0",
-        "fei/context": "^1.0",
         "doctrine/common": "^2.6",
         "league/fractal": "^0.14.0"
     },

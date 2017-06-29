@@ -381,7 +381,7 @@ class AuctionValidatorTest extends Unit
                     ->setMinimalBid(100)
                     ->setBidStep(10)
                     ->setBidStepStrategy(Auction::PERCENT_STRATEGY)
-                    ->setContext(['key' => 'value'])
+                    ->setContexts(['key' => 'value'])
             )
         );
     }

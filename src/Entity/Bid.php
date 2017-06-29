@@ -2,8 +2,8 @@
 
 namespace Fei\Service\Bid\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Fei\Entity\AbstractEntity;
-use Fei\Service\Context\ContextAwareTrait;
 
 /**
  * Class Bid
@@ -18,9 +18,9 @@ use Fei\Service\Context\ContextAwareTrait;
  */
 class Bid extends AbstractEntity
 {
-    use ContextAwareTrait {
-        hydrate as protected hydrateContext;
-    }
+    const STATUS_ONGOING = 1;
+    const STATUS_REFUSED = 2;
+    const STATUS_ACCEPTED = 4;
 
     /**
      * @var int
@@ -37,6 +37,13 @@ class Bid extends AbstractEntity
      * @Column(type="datetime")
      */
     protected $createdAt;
+
+    /**
+     * @var int
+     *
+     * @Column(type="integer")
+     */
+    protected $status;
 
     /**
      * @var float
@@ -61,12 +68,21 @@ class Bid extends AbstractEntity
     protected $auction;
 
     /**
+     * @var ArrayCollection
+     *
+     * @OneToMany(targetEntity="BidContext", mappedBy="bid", cascade={"all"})
+     */
+    protected $contexts;
+
+    /**
      * Bid constructor.
      *
      * @param array $data
      */
     public function __construct($data = null)
     {
+        $this->contexts = new ArrayCollection();
+        $this->setStatus(self::STATUS_ONGOING);
         $this->setCreatedAt(new \DateTime());
 
         parent::__construct($data);
@@ -120,6 +136,29 @@ class Bid extends AbstractEntity
 
         $this->createdAt = $createdAt;
 
+        return $this;
+    }
+
+    /**
+     * Get Status
+     *
+     * @return int
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Set Status
+     *
+     * @param int $status
+     *
+     * @return $this
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
         return $this;
     }
 
@@ -194,6 +233,75 @@ class Bid extends AbstractEntity
     }
 
     /**
+     * Get Contexts
+     *
+     * @return ArrayCollection
+     */
+    public function getContexts()
+    {
+        return $this->contexts;
+    }
+
+    /**
+     * Set Contexts
+     *
+     * @param ArrayCollection|BidContext|array $context
+     *
+     * @return $this
+     */
+    public function setContexts($context)
+    {
+        if ($context instanceof BidContext) {
+            $context->setBid($this);
+            $context = array($context);
+        }
+
+        if ($context instanceof \ArrayObject || is_array($context) || $context instanceof \Iterator) {
+            foreach ($context as $key => $value) {
+                if (!$value instanceof Context) {
+                    $value = $value instanceof \stdClass ? (array) $value : $value;
+
+                    if (is_int($key)
+                        && is_array($value)
+                        && array_key_exists('key', $value)
+                        && array_key_exists('value', $value)
+                    ) {
+                        $contextData = array('key' => $value['key'], 'value' => $value['value']);
+
+                        if (isset($value['id'])) {
+                            $contextData['id'] = $value['id'];
+                        }
+                    } else {
+                        $contextData = array('key' => $key, 'value' => $value);
+                    }
+
+                    $value = new BidContext($contextData);
+                }
+
+                $value->setBid($this);
+                $this->contexts->add($value);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add a context
+     *
+     * @param BidContext $context
+     *
+     * @return $this
+     */
+    public function addContext(BidContext $context)
+    {
+        $context->setBid($this);
+        $this->contexts->add($context);
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function toArray($mapped = false)
@@ -203,6 +311,15 @@ class Bid extends AbstractEntity
         if (!empty($data['auction']) && $data['auction'] instanceof Auction) {
             $data['auction_id'] = $data['auction']->getId();
             unset($data['auction']);
+        }
+
+        if (!empty($data['contexts'])) {
+            $context = array();
+            foreach ($data['contexts'] as $key => $value) {
+                $context[$key] = $value->toArray();
+                unset($context[$key]['bid']);
+            }
+            $data['contexts'] = $context;
         }
 
         return $data;
@@ -217,6 +334,6 @@ class Bid extends AbstractEntity
             $data['auction'] = new Auction($data['auction']);
         }
 
-        $this->hydrateContext($data);
+        parent::hydrate($data);
     }
 }
