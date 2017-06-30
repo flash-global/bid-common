@@ -426,7 +426,7 @@ class Auction extends AbstractEntity
     public function addContext(AuctionContext $context)
     {
         $context->setAuction($this);
-        $this->contexts->add($context);
+        $this->getContexts()->add($context);
 
         return $this;
     }

@@ -3,6 +3,7 @@
 namespace Tests\Fei\Service\Bid\Entity;
 
 use Codeception\Test\Unit;
+use Codeception\Util\Stub;
 use Doctrine\Common\Collections\ArrayCollection;
 use Fei\Service\Bid\Entity\Auction;
 use Fei\Service\Bid\Entity\AuctionContext;
@@ -210,6 +211,24 @@ class AuctionTest extends Unit
         $this->assertAttributeEquals($auction->getContexts(), 'contexts', $auction);
     }
 
+    public function testSetContextsFromArray()
+    {
+        $auction = new Auction();
+        $auction->setContexts([
+            ['key' => 'testKey', 'value' => 'testValue']
+        ]);
+
+        $context = new AuctionContext(['key' => 'testKey', 'value' => 'testValue']);
+        $context->setAuction($auction);
+
+        $expected = new ArrayCollection([
+            0 => (new AuctionContext(['key' => 'testKey', 'value' => 'testValue']))->setAuction($auction),
+        ]);
+
+        $this->assertEquals($expected, $auction->getContexts());
+        $this->assertAttributeEquals($auction->getContexts(), 'contexts', $auction);
+    }
+
     public function testHydrate()
     {
         $now = new \DateTime();
@@ -316,7 +335,10 @@ class AuctionTest extends Unit
 
         $auction = (new Auction())
             ->setCreatedAt($now)
-            ->addBid((new bid())->setCreatedAt($now));
+            ->addBid((new bid())->setCreatedAt($now))
+            ->addContext(
+                new AuctionContext(['key' => 'testContext', 'value' => 'testValue'])
+            );
 
         $this->assertEquals(
             [
@@ -339,7 +361,9 @@ class AuctionTest extends Unit
                         'auction_id' => $auction->getId(),
                     ]
                 ],
-                'contexts' => []
+                'contexts' => [
+                    ['key' => 'testContext', 'value' => 'testValue', 'id' => null],
+                ]
             ],
             $auction->toArray()
         );
@@ -367,5 +391,20 @@ class AuctionTest extends Unit
             ],
             $auction->toArray()
         );
+    }
+
+    public function testAddContext()
+    {
+        $auctionContextMock = $this->getMockBuilder(AuctionContext::class)->setMethods(['setAuction'])->getMock();
+        $auctionContextMock->expects($this->once())->method('setAuction');
+
+        $contextsMock = $this->getMockBuilder(ArrayCollection::class)->setMethods(['add'])->getMock();
+        $contextsMock->expects($this->once())->method('add')->with($auctionContextMock);
+
+        $auction = Stub::make(Auction::class, [
+            'getContexts' => $contextsMock,
+        ]);
+
+        $this->assertEquals($auction, $auction->addContext($auctionContextMock));
     }
 }

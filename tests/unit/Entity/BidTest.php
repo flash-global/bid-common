@@ -3,6 +3,7 @@
 namespace Tests\Fei\Service\Bid\Entity;
 
 use Codeception\Test\Unit;
+use Codeception\Util\Stub;
 use Doctrine\Common\Collections\ArrayCollection;
 use Fei\Service\Bid\Entity\Auction;
 use Fei\Service\Bid\Entity\Bid;
@@ -100,6 +101,24 @@ class BidTest extends Unit
         $this->assertAttributeEquals($bid->getContexts(), 'contexts', $bid);
     }
 
+    public function testSetContextsFromArray()
+    {
+        $bid = new Bid();
+        $bid->setContexts([
+            ['key' => 'testKey', 'value' => 'testValue']
+        ]);
+
+        $context = new BidContext(['key' => 'testKey', 'value' => 'testValue']);
+        $context->setBid($bid);
+
+        $expected = new ArrayCollection([
+            0 => (new BidContext(['key' => 'testKey', 'value' => 'testValue']))->setBid($bid),
+        ]);
+
+        $this->assertEquals($expected, $bid->getContexts());
+        $this->assertAttributeEquals($bid->getContexts(), 'contexts', $bid);
+    }
+
     public function testHydrate()
     {
         $now = new \DateTime();
@@ -182,7 +201,10 @@ class BidTest extends Unit
         $bid = (new Bid())
             ->setCreatedAt($now)
             ->setAuction((new Auction())
-                ->setCreatedAt($now));
+                ->setCreatedAt($now))
+            ->addContext(
+                new BidContext(['key' => 'testContext', 'value' => 'testValue'])
+            );
 
         $this->assertEquals(
             [
@@ -191,7 +213,9 @@ class BidTest extends Unit
                 'amount' => null,
                 'created_at' => $now->format(\DateTime::RFC3339),
                 'auction_id' => null,
-                'contexts' => [],
+                'contexts' => [
+                    ['key' => 'testContext', 'value' => 'testValue', 'id' => null],
+                ],
                 'status' => Bid::STATUS_ONGOING
             ],
             $bid->toArray()
@@ -217,5 +241,20 @@ class BidTest extends Unit
             ],
             $bid->toArray()
         );
+    }
+
+    public function testAddContext()
+    {
+        $bidContextMock = $this->getMockBuilder(BidContext::class)->setMethods(['setBid'])->getMock();
+        $bidContextMock->expects($this->once())->method('setBid');
+
+        $contextsMock = $this->getMockBuilder(ArrayCollection::class)->setMethods(['add'])->getMock();
+        $contextsMock->expects($this->once())->method('add')->with($bidContextMock);
+
+        $bid = Stub::make(Bid::class, [
+            'getContexts' => $contextsMock,
+        ]);
+
+        $this->assertEquals($bid, $bid->addContext($bidContextMock));
     }
 }

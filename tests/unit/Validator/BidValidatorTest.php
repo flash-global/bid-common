@@ -3,6 +3,7 @@
 namespace Tests\Fei\Service\Bid\Validator;
 
 use Codeception\Test\Unit;
+use Codeception\Util\Stub;
 use Fei\Entity\Validator\Exception;
 use Fei\Service\Bid\Entity\Auction;
 use Fei\Service\Bid\Entity\Bid;
@@ -290,5 +291,23 @@ class BidValidatorTest extends Unit
                     )
             )
         );
+    }
+
+    public function testValidateStatus()
+    {
+        $bidValidator = new BidValidator();
+        $this->assertEquals(true, $bidValidator->validateStatus(Bid::STATUS_ONGOING));
+        $this->assertEquals(true, $bidValidator->validateStatus(Bid::STATUS_REFUSED));
+        $this->assertEquals(true, $bidValidator->validateStatus(Bid::STATUS_ACCEPTED));
+    }
+
+    public function testValidateStatusInvalid()
+    {
+        $bidValidator = new BidValidator();
+
+        $errors = ['status' => ['The status has to be on of the following status: `Ongoing (1)`, `Refused (2)` or `Accepted (4)`']];
+
+        $this->assertEquals(false, $bidValidator->validateStatus('testStatus'));
+        $this->assertEquals($errors, $bidValidator->getErrors());
     }
 }
