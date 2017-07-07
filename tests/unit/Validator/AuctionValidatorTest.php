@@ -322,11 +322,11 @@ class AuctionValidatorTest extends Unit
 
         $this->assertCount(2, $this->validator->getErrors()['bidStepStrategy']);
         $this->assertEquals(
-            'The auction step strategy cannot be empty',
+            'The auction step strategy value must be 0, 1, or 2',
             $this->validator->getErrors()['bidStepStrategy'][0]
         );
         $this->assertEquals(
-            'The auction step strategy cannot be empty',
+            'The auction step strategy value must be 0, 1, or 2',
             $this->validator->getErrors()['bidStepStrategy'][1]
         );
 
@@ -380,7 +380,7 @@ class AuctionValidatorTest extends Unit
                     ->setEndAt(new \DateTime('+1 day'))
                     ->setMinimalBid(100)
                     ->setBidStep(10)
-                    ->setBidStepStrategy(Auction::PERCENT_STRATEGY)
+                    ->setBidStepStrategy(Auction::BASIC_STRATEGY)
                     ->setContexts(['key' => 'value'])
             )
         );
