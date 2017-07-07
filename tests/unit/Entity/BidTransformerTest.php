@@ -30,7 +30,8 @@ class BidTransformerTest extends Unit
                 'created_at' => $now->format(\DateTime::ISO8601),
                 'amount' => 120,
                 'bidder' => 'a bidder',
-                'contexts' => ['key' => 'value']
+                'contexts' => ['key' => 'value'],
+                'status' => Bid::STATUS_ONGOING,
             ],
             (new BidTransformer())->transform($bid)
         );

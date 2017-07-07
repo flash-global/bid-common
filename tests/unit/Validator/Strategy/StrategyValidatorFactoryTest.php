@@ -39,4 +39,11 @@ class StrategyValidatorFactoryTest extends Unit
             (new Auction())->setBidStepStrategy(Auction::PERCENT_STRATEGY)
         ));
     }
+
+    public function testCreateNoStrategyValidator()
+    {
+        $this->assertInstanceOf(StrategyValidatorInterface::class, StrategyValidatorFactory::create(
+            (new Auction())->setBidStepStrategy(Auction::NO_STRATEGY)
+        ));
+    }
 }

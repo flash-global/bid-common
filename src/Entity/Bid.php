@@ -296,7 +296,7 @@ class Bid extends AbstractEntity
     public function addContext(BidContext $context)
     {
         $context->setBid($this);
-        $this->contexts->add($context);
+        $this->getContexts()->add($context);
 
         return $this;
     }
