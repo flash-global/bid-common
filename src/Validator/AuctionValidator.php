@@ -232,11 +232,6 @@ class AuctionValidator extends AbstractValidator
      */
     public function validateBidStepStrategy($stepUnit)
     {
-        if (empty($stepUnit) && $stepUnit !== 0) {
-            $this->addError('bidStepStrategy', 'The auction step strategy cannot be empty');
-            return false;
-        }
-
         if (!is_numeric($stepUnit) || !in_array($stepUnit, [Auction::PERCENT_STRATEGY, Auction::BASIC_STRATEGY, Auction::NO_STRATEGY])) {
             $this->addError('bidStepStrategy', 'The auction step strategy value must be 0, 1, or 2');
             return false;
