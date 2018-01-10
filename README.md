@@ -13,7 +13,7 @@
 |---------------|-------------------|----------|---------------|
 | id          | `int`      | No       |               |
 | createdAt          | `datetime`      | No       | Now()              |
-| key     | `string`        | Yes       | 1         |
+| key     | `string`        | Yes       |          |
 | startAt     | `datetime`          | Yes       |              |
 | endAt     | `datetime`          | Yes       |              |
 | minimalBid     | `float`          | Yes       |               |
