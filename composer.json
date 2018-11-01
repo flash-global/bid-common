@@ -1,12 +1,12 @@
 {
     "name": "fei/bid-common",
-    "description": "Flash applicative bid - common component",
+    "description": "Bid - common component",
     "type": "library",
     "license": "proprietary",
     "authors": [
         {
             "name": "Vincent Simonin",
-            "email": "vsi@opcoding.eu"
+            "email": "v.simonin@redspher.com"
         }
     ],
     "autoload": {

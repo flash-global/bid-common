@@ -28,24 +28,45 @@ class BidValidator extends AbstractValidator
             );
         }
 
+	$isExpiredAtValid = $this->validateExpiredAt($entity->getExpiredAt());
         $isCreatedAtValid = $this->validateCreatedAt($entity->getCreatedAt());
         $isStatusValid = $this->validateStatus($entity->getStatus());
         $isAmountValid = $this->validateAmount($entity->getAmount());
         $this->validateBidder($entity->getBidder());
-        $this->validateContext($entity->getContexts());
+	$this->validateContext($entity->getContexts());
+	$this->validateDate($entity->getCreatedAt(), $entity->getExpiredAt());
 
-        if ($isCreatedAtValid
+	if ($isCreatedAtValid
+	    && $isExpiredAtValid
             && $isAmountValid
             && $entity->getAuction() !== null
             && $this->validateAuction($entity->getAuction())
         ) {
             $this->validateCreatedAtByAuction($entity->getCreatedAt(), $entity->getAuction());
+            $this->validateExpiredAtByAuction($entity->getExpiredAt(), $entity->getAuction());
             $this->validateAmountByAuction($entity->getAmount(), $entity->getAuction());
         }
 
         $errors = $this->getErrors();
 
         return empty($errors);
+    }
+
+    /**
+     * Validate expiredAt
+     *
+     * @param mixed $expiredAt
+     *
+     * @return bool
+     */
+    public function validateExpiredAt($expiredAt)
+    {
+        if (!$expiredAt instanceof \DateTimeInterface) {
+            $this->addError('createdAt', 'The bid expiration date time must be a \DateTimeInterface instance');
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -120,6 +141,25 @@ class BidValidator extends AbstractValidator
     }
 
     /**
+     * Validate dates
+     *
+     * @param createdAt
+     * @param expiredAt
+     *
+     * @return bool
+     */
+    public function validateDate($createdAt, $expiredAt)
+    {
+        if ($createdAt > $expiredAt) {
+            $this->addError('bidder', 'expiration date must be after creation date.');
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /**
      * Validate bidder
      *
      * @param mixed $bidder
@@ -175,6 +215,35 @@ class BidValidator extends AbstractValidator
 
         return true;
     }
+
+    /**
+     * Validate expiredAt in relation of associated Auction state
+     *
+     * @param \DateTimeInterface $expireAt
+     * @param Auction            $auction
+     *
+     * @return bool
+     */
+    public function validateExpiredAtByAuction(\DateTimeInterface $expireAt, Auction $auction)
+    {
+        if ($expireAt < $auction->getStartAt() || $expireAt > $auction->getEndAt()) {
+            $this->addError(
+                'auction',
+                sprintf(
+                    'The bid expiration date time must be in auction interval date time validity.'
+                    . ' Given %s, not between %s and %s',
+                    $expireAt->format(\DateTime::ISO8601),
+                    $auction->getStartAt()->format(\DateTime::ISO8601),
+                    $auction->getEndAt()->format(\DateTime::ISO8601)
+                )
+            );
+            return false;
+        }
+
+        return true;
+    }
+
+
 
     /**
      * Validate createdAt in relation of associated Auction state
