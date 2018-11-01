@@ -21,6 +21,7 @@ class Bid extends AbstractEntity
     const STATUS_ONGOING = 1;
     const STATUS_REFUSED = 2;
     const STATUS_ACCEPTED = 4;
+    const STATUS_EXPIRED = 8;
 
     /**
      * @var int
@@ -37,6 +38,13 @@ class Bid extends AbstractEntity
      * @Column(type="datetime")
      */
     protected $createdAt;
+
+    /**
+     * @var \DateTimeInterface
+     *
+     * @Column(type="datetime")
+     */
+    protected $expiredAt;
 
     /**
      * @var int
@@ -135,6 +143,34 @@ class Bid extends AbstractEntity
         }
 
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get ExpiredAt
+     *
+     * @return \DateTimeInterface
+     */
+    public function getExpiredAt()
+    {
+        return $this->expiredAt;
+    }
+
+    /**
+     * Set ExpiredAt
+     *
+     * @param string|\DateTimeInterface $expiredAt
+     *
+     * @return $this
+     */
+    public function setCreatedAt($expiredAt)
+    {
+        if (is_string($expiredAt)) {
+            $expiredAt = new \DateTime($expiredAt);
+        }
+
+        $this->expiredAt = $expiredAt;
 
         return $this;
     }
