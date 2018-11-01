@@ -164,7 +164,7 @@ class Bid extends AbstractEntity
      *
      * @return $this
      */
-    public function setCreatedAt($expiredAt)
+    public function setExpiredAt($expiredAt)
     {
         if (is_string($expiredAt)) {
             $expiredAt = new \DateTime($expiredAt);
