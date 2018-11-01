@@ -43,7 +43,7 @@ class BidValidator extends AbstractValidator
             && $this->validateAuction($entity->getAuction())
         ) {
             $this->validateCreatedAtByAuction($entity->getCreatedAt(), $entity->getAuction());
-            $this->validateExpiredAtByAuction($entity->getExpiredAt(), $entity->getAuction());
+            if ($entity->getExpiredAt()) $this->validateExpiredAtByAuction($entity->getExpiredAt(), $entity->getAuction());
             $this->validateAmountByAuction($entity->getAmount(), $entity->getAuction());
         }
 
@@ -61,7 +61,7 @@ class BidValidator extends AbstractValidator
      */
     public function validateExpiredAt($expiredAt)
     {
-        if (!$expiredAt instanceof \DateTimeInterface) {
+        if ($expiredAt && !$expiredAt instanceof \DateTimeInterface) {
             $this->addError('createdAt', 'The bid expiration date time must be a \DateTimeInterface instance');
             return false;
         }
@@ -150,7 +150,7 @@ class BidValidator extends AbstractValidator
      */
     public function validateDate($createdAt, $expiredAt)
     {
-        if ($createdAt > $expiredAt) {
+        if ($expiredAt && $createdAt > $expiredAt) {
             $this->addError('bidder', 'expiration date must be after creation date.');
             return false;
         }
