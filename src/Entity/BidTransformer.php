@@ -30,7 +30,7 @@ class BidTransformer extends TransformerAbstract
             'id' => (int) $bid->getId(),
             'status' => (int) $bid->getStatus(),
             'created_at' => $bid->getCreatedAt()->format(\DateTime::ISO8601),
-            'expired_at' => $bid->getExpiredAt()->format(\DateTime::ISO8601),
+            'expired_at' => $bid->getExpiredAt() ? $bid->getExpiredAt()->format(\DateTime::ISO8601) : '',
             'amount' => $bid->getAmount(),
             'bidder' => $bid->getBidder(),
             'contexts' => $contextItems
