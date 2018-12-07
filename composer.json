@@ -16,8 +16,8 @@
     },
     "repositories": [
         {
-            "type": "composer",
-            "url": "https://composer.flash.global"
+            "type": "git",
+            "url": "git@github.com:flash-global/entities.git"
         }
     ],
     "require": {
