@@ -99,12 +99,17 @@ class BidValidator extends AbstractValidator
      */
     public function validateStatus($status)
     {
-        if (!in_array($status, [Bid::STATUS_ONGOING, Bid::STATUS_REFUSED, Bid::STATUS_ACCEPTED])) {
+        if (!in_array($status, [Bid::STATUS_ONGOING, Bid::STATUS_REFUSED, Bid::STATUS_ACCEPTED, 
+                                Bid::STATUS_EXPIRED, Bid::STATUS_CANCELLED, Bid::STATUS_RESERVED])) {
             $this->addError('status', sprintf(
-                'The status has to be on of the following status: `Ongoing (%d)`, `Refused (%d)` or `Accepted (%d)`',
+                'The status has to be on of the following status: `Ongoing (%d)`, `Refused (%d)`, `Accepted (%d)`,
+                 `Expired (%d)`, `Cancelled (%d)` or `Reserved (%d)`',
                 Bid::STATUS_ONGOING,
                 Bid::STATUS_REFUSED,
-                Bid::STATUS_ACCEPTED
+                Bid::STATUS_ACCEPTED,
+		Bid::STATUS_EXPIRED,
+		Bid::STATUS_CANCELLED,
+		Bid::STATUS_RESERVED
             ));
 
             return false;
