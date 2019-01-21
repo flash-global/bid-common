@@ -22,6 +22,8 @@ class Bid extends AbstractEntity
     const STATUS_REFUSED = 2;
     const STATUS_ACCEPTED = 4;
     const STATUS_EXPIRED = 8;
+    const STATUS_CANCELLED = 16;
+    const STATUS_RESERVED = 32;
 
     /**
      * @var int
